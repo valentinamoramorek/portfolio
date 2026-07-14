@@ -1,0 +1,99 @@
+---
+import { loadContentItems, filterItems, sortByPriority, type ContentFilter, type ContentItem } from '../data/content';
+import ContentCard from './ContentCard.astro';
+
+interface Props extends ContentFilter {}
+
+const { client, contentType } = Astro.props;
+
+const { items, warnings } = loadContentItems();
+
+warnings.forEach((warning) => console.warn(`[content.csv] ${warning}`));
+
+// The grid below is a CSS multi-column layout, which fills column 1, then
+// column 2, then column 3 in list order (not round-robin). Videos tend to
+// get added to the CSV in a batch, so without this they clump into whichever
+// column their run of the list lands in. Spread them evenly through the
+// list instead of touching the CSV's authored order.
+function distributeEvenly(list: ContentItem[]): ContentItem[] {
+	const videos = list.filter((item) => item.type === 'video');
+	const rest = list.filter((item) => item.type !== 'video');
+	if (videos.length === 0 || rest.length === 0) return list;
+
+	const gap = rest.length / videos.length;
+	const result: ContentItem[] = [];
+	let restIndex = 0;
+	let videoIndex = 0;
+
+	for (let i = 0; i < list.length; i++) {
+		const expectedVideos = Math.floor((i + 1) / (gap + 1));
+		if (videoIndex < expectedVideos && videoIndex < videos.length) {
+			result.push(videos[videoIndex++]);
+		} else if (restIndex < rest.length) {
+			result.push(rest[restIndex++]);
+		} else {
+			result.push(videos[videoIndex++]);
+		}
+	}
+
+	return result;
+}
+
+// Priority rows must lead their section, so the video interleave above runs
+// separately on the prioritized rows and the rest — otherwise spreading
+// videos evenly across the *combined* list could pull an unprioritized
+// video ahead of a prioritized image.
+function orderSection(sectionItems: ContentItem[]): ContentItem[] {
+	const ordered = sortByPriority(sectionItems);
+	const prioritizedCount = ordered.filter((item) => item.priority !== null).length;
+	return [...distributeEvenly(ordered.slice(0, prioritizedCount)), ...distributeEvenly(ordered.slice(prioritizedCount))];
+}
+
+// When multiple clients are requested, each client's content is grouped and
+// ordered as its own section (in the given order) rather than interleaved by
+// CSV row order — so "featured clients" reads as one client's work, then the
+// next's, instead of a shuffled mix.
+const clientList = Array.isArray(client) ? client : client ? [client] : null;
+const distributed = clientList
+	? clientList.flatMap((singleClient) => orderSection(filterItems(items, { client: singleClient, contentType })))
+	: orderSection(filterItems(items, { contentType }));
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+	'/src/assets/content/*.{png,jpg,jpeg,webp,gif}',
+	{ eager: true },
+);
+
+const EAGER_COUNT = 3;
+---
+
+<div class="content-grid columns-1 sm:columns-2 lg:columns-3 gap-[30px]" data-content-grid>
+	{
+		distributed.map((item, index) => {
+			const image = item.image ? (imageModules[item.image]?.default ?? null) : null;
+			return <ContentCard item={item} image={image} eager={index < EAGER_COUNT} />;
+		})
+	}
+</div>
+
+<script>
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const revealEls = document.querySelectorAll<HTMLElement>('.content-grid [data-reveal]');
+
+	if (!reduceMotion) {
+		revealEls.forEach((el) => el.classList.add('reveal-hidden'));
+	}
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				entry.target.classList.remove('reveal-hidden');
+				observer.unobserve(entry.target);
+			}
+		},
+		{ threshold: 0.15 },
+	);
+
+	revealEls.forEach((el) => observer.observe(el));
+</script>

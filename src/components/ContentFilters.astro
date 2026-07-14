@@ -1,0 +1,66 @@
+---
+import { loadContentItems } from '../data/content';
+
+const { items } = loadContentItems();
+const contentTypes = [...new Set(items.map((item) => item.contentType))].sort();
+
+const FILTER_LABELS: Record<string, string> = {
+	'LinkedIn post': 'Posts',
+};
+---
+
+<div class="content-filters">
+	<p class="font-sans text-xs sm:text-sm uppercase tracking-wide text-foreground/40 mb-3">Filters</p>
+	<div class="flex flex-wrap gap-3" data-filter-bar>
+		<button
+			type="button"
+			class="filter-pill active font-sans text-sm sm:text-base font-medium px-5 py-2.5 rounded-xl bg-soft-blue text-strong-blue transition"
+			data-filter-type="all"
+		>
+			All Content Type
+		</button>
+		{
+			contentTypes.map((type) => (
+				<button
+					type="button"
+					class="filter-pill font-sans text-sm sm:text-base px-5 py-2.5 rounded-xl bg-white border border-strong-blue/15 text-foreground/60 transition hover:border-strong-blue/40"
+					data-filter-type={type}
+				>
+					{FILTER_LABELS[type] ?? type}
+				</button>
+			))
+		}
+	</div>
+</div>
+
+<script>
+	const ACTIVE_CLASSES = ['bg-soft-blue', 'text-strong-blue', 'font-medium'];
+	const INACTIVE_CLASSES = ['bg-white', 'border', 'border-strong-blue/15', 'text-foreground/60'];
+
+	const bar = document.querySelector<HTMLElement>('[data-filter-bar]');
+	const pills = bar ? Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter-type]')) : [];
+
+	function setActive(pill: HTMLButtonElement) {
+		pills.forEach((p) => {
+			const isActive = p === pill;
+			p.classList.toggle('active', isActive);
+			p.classList.remove(...ACTIVE_CLASSES, ...INACTIVE_CLASSES);
+			p.classList.add(...(isActive ? ACTIVE_CLASSES : INACTIVE_CLASSES));
+		});
+	}
+
+	function applyFilter(type: string) {
+		const cards = document.querySelectorAll<HTMLElement>('[data-content-grid] [data-card]');
+		cards.forEach((card) => {
+			const show = type === 'all' || card.dataset.contentType === type;
+			card.classList.toggle('hidden', !show);
+		});
+	}
+
+	pills.forEach((pill) => {
+		pill.addEventListener('click', () => {
+			setActive(pill);
+			applyFilter(pill.dataset.filterType ?? 'all');
+		});
+	});
+</script>

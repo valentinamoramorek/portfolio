@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import type { ContentItem } from '../data/content';
+import { getVideoEmbedUrl } from '../utils/embed';
+
+interface Props {
+	item: ContentItem;
+	image?: ImageMetadata | null;
+	eager?: boolean;
+}
+
+const { item, image = null, eager = false } = Astro.props;
+
+const isVideo = item.type === 'video';
+const embedUrl = isVideo ? getVideoEmbedUrl(item.url, item.platform) : null;
+---
+
+<article
+	class="content-card group break-inside-avoid mb-[30px] bg-white rounded-2xl shadow-sm cursor-pointer transition duration-200 ease-out hover:-translate-y-[6px] hover:shadow-xl p-[15px]"
+	data-card
+	data-content-type={item.contentType}
+	data-client={item.client}
+	data-type={item.type}
+	data-url={item.url}
+	data-embed-url={embedUrl ?? ''}
+	data-link-label={item.linkLabel}
+	data-translated={item.translated}
+	data-reveal
+>
+	<div class="card-media relative overflow-hidden rounded-xl">
+		{
+			image ? (
+				<Image
+					src={image}
+					alt={`${item.client} — ${item.contentType}`}
+					widths={[320, 480, 640]}
+					sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+					format="webp"
+					quality={80}
+					loading={eager ? 'eager' : 'lazy'}
+					class="w-full h-auto block"
+				/>
+			) : (
+				<div class="fallback-tile aspect-[4/3] bg-bright-lime flex flex-col items-center justify-center gap-3">
+					{isVideo && (
+						<svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 text-foreground" aria-hidden="true">
+							<path d="M8 5v14l11-7z" />
+						</svg>
+					)}
+					<span class="font-sans font-semibold text-sm text-foreground">{item.contentType}</span>
+				</div>
+			)
+		}
+
+		<div class="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-colors duration-200 ease-out flex items-center justify-center">
+			<span class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition duration-200 ease-out">
+				<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-foreground">
+					<path
+						d="M9 4H4v5M15 4h5v5M4 15v5h5M20 15v5h-5"
+						stroke="currentColor"
+						stroke-width="1.75"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</span>
+		</div>
+	</div>
+
+	<div class="mt-[12px] border-t border-foreground/10"></div>
+
+	{
+		item.stats.length > 0 && (
+			<div class="mt-[15px] flex flex-wrap gap-2 sm:gap-3">
+				{item.stats.map((stat) => (
+					<div class="bg-soft-lime rounded-xl px-3 py-2 sm:px-4 sm:py-3 min-w-[4.5rem]">
+						<p class="font-sans font-medium text-[#000000] text-base sm:text-lg tabular-nums">{stat.value}</p>
+						<p class="font-sans font-medium text-[10px] sm:text-xs text-[#9FA09B] tracking-[0.14em]">{stat.label}</p>
+					</div>
+				))}
+			</div>
+		)
+	}
+
+	<a
+		href={item.url}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="mt-[35px] block font-sans font-medium text-strong-blue text-sm sm:text-base hover:opacity-80 transition"
+	>
+		{item.linkLabel} <span aria-hidden="true">↗</span>
+	</a>
+</article>
+
+<style>
+	[data-reveal] {
+		transition:
+			opacity 0.6s ease-out,
+			transform 0.6s ease-out;
+	}
+
+	[data-reveal].reveal-hidden {
+		opacity: 0;
+		transform: translateY(1.5rem);
+	}
+</style>

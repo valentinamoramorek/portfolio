@@ -1,0 +1,217 @@
+---
+---
+
+<div class="new-followers-card">
+	<p class="headline">New Followers Captured</p>
+	<p class="delta">+221K in the period</p>
+
+	<div class="pill" data-pill>200K</div>
+
+	<svg class="chart" viewBox="0 0 275 190" preserveAspectRatio="none">
+		<defs>
+			<linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+				<stop offset="0%" stop-color="#eaf261" stop-opacity="0" />
+				<stop offset="15%" stop-color="#111" stop-opacity="0.25" />
+				<stop offset="100%" stop-color="#111" stop-opacity="1" />
+			</linearGradient>
+		</defs>
+
+		<g class="grid">
+			<line x1="0" y1="45" x2="275" y2="45" />
+			<line x1="0" y1="140" x2="275" y2="140" />
+		</g>
+
+		<!-- trend rises overall from 200K (bottom-left) to 421K (top-right), with a natural dip mid-way -->
+		<path
+			class="trend"
+			stroke="url(#fade)"
+			d="M0,168 C40,150 60,120 95,128 C125,134 140,158 160,150 C185,140 200,90 220,60 C238,34 250,18 262,10"
+		/>
+
+		<line class="stem" x1="262" y1="10" x2="262" y2="188" />
+
+		<circle class="dot-ring" cx="262" cy="10" r="7" />
+		<circle class="dot" cx="262" cy="10" r="6" />
+	</svg>
+
+	<p class="caption">Remotivate — LinkedIn</p>
+</div>
+
+<style>
+	.new-followers-card {
+		position: relative;
+		width: 323px;
+		height: 400px;
+		background: #eaf261;
+		border-radius: 28px;
+		padding: 26px 24px;
+		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+		font-family: 'DM Sans', sans-serif;
+	}
+
+	.headline {
+		font-family: 'Bricolage Grotesque', sans-serif;
+		font-weight: 800;
+		font-size: 26px;
+		line-height: 1.14;
+		letter-spacing: -0.4px;
+		color: #111;
+		margin: 0;
+		max-width: 80%;
+	}
+
+	.delta {
+		font-family: 'DM Sans', sans-serif;
+		font-weight: 700;
+		font-size: 14px;
+		color: #111;
+		opacity: 0.6;
+		margin-top: 6px;
+	}
+
+	.pill {
+		position: absolute;
+		background: #111;
+		color: #fff;
+		font-family: 'DM Sans', sans-serif;
+		font-weight: 700;
+		font-size: 16px;
+		padding: 7px 13px;
+		border-radius: 14px;
+		white-space: nowrap;
+		opacity: 0;
+		animation: pillIn 0.4s ease forwards;
+		animation-delay: 0.1s;
+	}
+
+	@keyframes pillIn {
+		to {
+			opacity: 1;
+		}
+	}
+
+	.chart {
+		position: absolute;
+		left: 24px;
+		right: 24px;
+		bottom: 56px;
+		top: 150px;
+	}
+
+	.grid line {
+		stroke: #111;
+		stroke-opacity: 0.3;
+		stroke-width: 1.4;
+		stroke-dasharray: 2 5;
+	}
+
+	.trend {
+		fill: none;
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-dasharray: 420;
+		stroke-dashoffset: 420;
+		animation: draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+	}
+
+	@keyframes draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+
+	.stem {
+		stroke: #111;
+		stroke-opacity: 0.45;
+		stroke-width: 2;
+		stroke-dasharray: 40;
+		stroke-dashoffset: 40;
+		animation: draw 0.4s ease forwards;
+		animation-delay: 2.3s;
+	}
+
+	.dot {
+		fill: #111;
+		opacity: 0;
+		animation: dotIn 0.3s ease forwards;
+		animation-delay: 2.25s;
+	}
+	.dot-ring {
+		fill: none;
+		stroke: #111;
+		stroke-width: 2;
+		opacity: 0;
+		animation: ringPulse 2s ease-out infinite;
+		animation-delay: 2.6s;
+	}
+
+	@keyframes dotIn {
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes ringPulse {
+		0% {
+			opacity: 0.6;
+			r: 7;
+		}
+		100% {
+			opacity: 0;
+			r: 18;
+		}
+	}
+
+	.caption {
+		position: absolute;
+		left: 24px;
+		bottom: 14px;
+		font-size: 12.5px;
+		color: #111;
+		opacity: 0.55;
+		font-weight: 600;
+	}
+</style>
+
+<script>
+	// Scoped to each .new-followers-card instance (Astro dedupes this script
+	// to run once per page even though the carousel renders the card twice).
+	document.querySelectorAll<HTMLElement>('.new-followers-card').forEach((card) => {
+		const pill = card.querySelector<HTMLElement>('[data-pill]')!;
+		const start = 200000;
+		const end = 421000;
+		const duration = 2400;
+		const t0 = performance.now();
+
+		function format(v: number) {
+			return Math.round(v / 1000) + 'K';
+		}
+
+		function tick(now: number) {
+			const p = Math.min((now - t0) / duration, 1);
+			const eased = 1 - Math.pow(1 - p, 3);
+			const value = start + (end - start) * eased;
+			pill.textContent = format(value);
+			if (p < 1) requestAnimationFrame(tick);
+		}
+		requestAnimationFrame(tick);
+
+		// position the pill just above the dot's end point, recalculated on load/resize
+		function positionPill() {
+			const svg = card.querySelector<SVGSVGElement>('.chart')!;
+			const dot = card.querySelector<SVGCircleElement>('.dot')!;
+			const svgRect = svg.getBoundingClientRect();
+			const pt = dot.ownerSVGElement!.createSVGPoint();
+			pt.x = Number(dot.getAttribute('cx'));
+			pt.y = Number(dot.getAttribute('cy'));
+			const screenPt = pt.matrixTransform(dot.getScreenCTM()!);
+			const cardRect = card.getBoundingClientRect();
+			pill.style.left = screenPt.x - cardRect.left - pill.offsetWidth / 2 + 'px';
+			pill.style.top = screenPt.y - cardRect.top - 44 + 'px';
+		}
+		window.addEventListener('load', positionPill);
+		window.addEventListener('resize', positionPill);
+		setTimeout(positionPill, 50);
+	});
+</script>

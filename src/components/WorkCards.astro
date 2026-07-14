@@ -1,0 +1,160 @@
+---
+import { workCards, formatStat } from '../data/workCards';
+---
+
+<section id="work" class="work-cards px-6 py-16 md:py-20">
+	<div class="max-w-6xl mx-auto">
+		<div class="mb-10 md:mb-14 flex flex-col items-center text-center">
+			<p class="font-sans text-sm text-foreground/60 -rotate-2 mb-2">from 2020 'til today</p>
+			<h2 class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl lg:text-[80px] leading-tight text-foreground">
+				Some of my work
+			</h2>
+		</div>
+
+		<div class="flex flex-col gap-10 md:gap-12">
+			{
+				workCards.map((card) => (
+					<article
+						class:list={[
+							'flex flex-col md:flex-row items-stretch gap-4 md:gap-5',
+							card.side === 'right' ? 'md:flex-row-reverse' : 'md:flex-row',
+						]}
+						data-reveal
+					>
+						<div class="card-gradient rounded-2xl overflow-hidden flex-1 flex flex-col justify-between gap-4 sm:gap-6 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8 pb-0">
+							<div class="flex justify-between items-baseline gap-2">
+								<span class="font-heading font-bold text-base sm:text-lg md:text-xl text-foreground">
+									{card.label}
+								</span>
+								<span class="font-sans text-sm sm:text-base text-foreground/50">{card.sublabel}</span>
+							</div>
+
+							<div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8">
+								<div class="bg-white shadow-lg rounded-xl sm:rounded-2xl px-2.5 py-2 sm:px-4 sm:py-3 md:px-5 md:py-4 text-center shrink-0 max-w-[6rem] sm:max-w-[8rem] md:max-w-none transition duration-200 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl">
+									<p class="font-stat font-semibold text-foreground text-sm sm:text-lg md:text-xl tabular-nums">
+										{formatStat(card.floatingLeft.stat)}
+									</p>
+									<p class="font-stat text-[10px] sm:text-xs md:text-sm text-foreground/50">
+										{card.floatingLeft.caption}
+									</p>
+								</div>
+
+								<img
+									src={card.image}
+									alt={card.alt}
+									class="w-20 sm:w-32 md:w-40 lg:w-52 h-auto shrink-0"
+								/>
+
+								<div class="bg-white shadow-lg rounded-xl sm:rounded-2xl px-2.5 py-2 sm:px-4 sm:py-3 md:px-5 md:py-4 text-center shrink-0 max-w-[6rem] sm:max-w-[8rem] md:max-w-none transition duration-200 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl">
+									<p class="font-stat font-semibold text-foreground text-sm sm:text-lg md:text-xl tabular-nums">
+										{formatStat(card.floatingRight.stat)}
+									</p>
+									<p class="font-stat text-[10px] sm:text-xs md:text-sm text-foreground/50">
+										{card.floatingRight.caption}
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="bg-soft-lime rounded-2xl md:w-72 lg:w-80 shrink-0 flex flex-col gap-4 px-8 py-6">
+							<div class="flex-1 flex flex-col justify-evenly divide-y divide-dashed divide-strong-blue">
+								{card.panel.map((stat) => (
+									<div class="py-2 text-center">
+										{'text' in stat ? (
+											<p class="font-heading font-bold text-xl md:text-2xl leading-snug text-foreground">
+												{stat.text}
+											</p>
+										) : (
+											<p
+												class="font-heading font-bold text-xl md:text-2xl leading-snug text-foreground tabular-nums"
+												data-count={JSON.stringify(stat)}
+											>
+												{formatStat(stat)}
+											</p>
+										)}
+									</div>
+								))}
+							</div>
+
+							<a
+								href={card.href}
+								class="block text-center bg-strong-blue text-white font-sans font-bold text-sm sm:text-base rounded-2xl px-6 py-3 transition duration-200 ease-out hover:brightness-95 hover:-translate-y-0.5"
+							>
+								See the strategy
+							</a>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	[data-reveal] {
+		transition:
+			opacity 0.7s ease-out,
+			transform 0.7s ease-out;
+	}
+
+	[data-reveal].reveal-hidden {
+		opacity: 0;
+		transform: translateY(2rem);
+	}
+</style>
+
+<script>
+	import { formatStat, type StatValue } from '../data/workCards';
+
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const revealEls = document.querySelectorAll<HTMLElement>('.work-cards [data-reveal]');
+	const countEls = document.querySelectorAll<HTMLElement>('.work-cards [data-count]');
+
+	if (!reduceMotion) {
+		revealEls.forEach((el) => el.classList.add('reveal-hidden'));
+	}
+
+	function animateCount(el: HTMLElement) {
+		const stat = JSON.parse(el.dataset.count as string) as StatValue;
+
+		if (reduceMotion) {
+			el.textContent = formatStat(stat);
+			return;
+		}
+
+		const duration = 1500;
+		const start = performance.now();
+
+		function tick(now: number) {
+			const progress = Math.min((now - start) / duration, 1);
+			const eased = 1 - Math.pow(1 - progress, 3);
+			el.textContent = formatStat(stat, stat.value * eased);
+			if (progress < 1) requestAnimationFrame(tick);
+		}
+
+		requestAnimationFrame(tick);
+	}
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				const el = entry.target as HTMLElement;
+
+				if (el.hasAttribute('data-reveal')) {
+					el.classList.remove('reveal-hidden');
+				}
+				if (el.hasAttribute('data-count')) {
+					animateCount(el);
+				}
+
+				observer.unobserve(el);
+			}
+		},
+		{ threshold: 0.3 },
+	);
+
+	revealEls.forEach((el) => observer.observe(el));
+	countEls.forEach((el) => observer.observe(el));
+</script>

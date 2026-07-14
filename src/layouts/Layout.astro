@@ -1,14 +1,49 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonical?: string;
+	image?: string;
+	type?: 'website' | 'article';
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+	noindex?: boolean;
+}
+
+const {
+	title = 'B2B Content Manager - Valentina Mora',
+	description = 'Valentina Mora is a B2B Content Manager helping brands go from seen to chosen through content strategy, social media management, and brand storytelling.',
+	canonical,
+	image,
+	type,
+	jsonLd,
+	noindex,
+} = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="apple-touch-icon" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<SEO
+			title={title}
+			description={description}
+			canonical={canonical}
+			image={image}
+			type={type}
+			jsonLd={jsonLd}
+			noindex={noindex}
+		/>
 	</head>
-	<body>
+	<body class="bg-background text-foreground font-sans">
+		<Header />
 		<slot />
 	</body>
 </html>

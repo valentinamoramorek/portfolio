@@ -1,0 +1,98 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Service {
+	icon: string;
+	title: string;
+	description: string;
+}
+
+const services: Service[] = [
+	{
+		icon: 'brand',
+		title: 'Brand & Content Strategy',
+		description:
+			'Aligning how your brand shows up online with your real business goals. We can call it "<em>a digital footprint with purpose</em>".',
+	},
+	{
+		icon: 'content',
+		title: 'B2B Content Marketing',
+		description:
+			'From the plan to the posts to the results, across LinkedIn, Instagram, TikTok, YouTube and your newsletter or blog.',
+	},
+	{
+		icon: 'personal_branding',
+		title: 'Personal Branding',
+		description:
+			'Amplifying every marketing effort through people-led channels, the ones that actually drive the most engagement and results.',
+	},
+	{
+		icon: 'automation',
+		title: 'Marketing Automations',
+		description:
+			'Automating the heaviest parts of content creation with human-in-the-loop workflows that free you for your best work.',
+	},
+];
+---
+
+<section class="services px-6 py-16 md:py-24">
+	<div class="max-w-6xl mx-auto">
+		<h2 class="font-heading font-bold text-4xl sm:text-5xl text-foreground mb-2">
+			What I specialize in:
+		</h2>
+		<p class="font-sans text-lg text-foreground/60 mb-12 md:mb-16">
+			And, yes, these happen to be the things I love most.
+		</p>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 lg:gap-x-24 gap-y-12 md:gap-y-16">
+			{
+				services.map((service) => (
+					<div class="flex flex-col gap-3" data-reveal>
+						<Icon name={service.icon} class="w-10 h-10 text-foreground" />
+						<h3 class="font-heading font-bold text-xl md:text-2xl text-foreground">
+							{service.title}
+						</h3>
+						<hr class="w-40 border-t-2 border-dashed border-strong-blue" />
+						<p class="font-sans text-foreground/60 max-w-xs" set:html={service.description} />
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	[data-reveal] {
+		transition:
+			opacity 0.7s ease-out,
+			transform 0.7s ease-out;
+	}
+
+	[data-reveal].reveal-hidden {
+		opacity: 0;
+		transform: translateY(2rem);
+	}
+</style>
+
+<script>
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const revealEls = document.querySelectorAll<HTMLElement>('.services [data-reveal]');
+
+	if (!reduceMotion) {
+		revealEls.forEach((el) => el.classList.add('reveal-hidden'));
+	}
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				entry.target.classList.remove('reveal-hidden');
+				observer.unobserve(entry.target);
+			}
+		},
+		{ threshold: 0.2 },
+	);
+
+	revealEls.forEach((el) => observer.observe(el));
+</script>

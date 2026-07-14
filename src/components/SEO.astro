@@ -1,0 +1,41 @@
+---
+interface Props {
+	title: string;
+	description: string;
+	canonical?: string;
+	image?: string;
+	type?: 'website' | 'article';
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+	noindex?: boolean;
+}
+
+const { title, description, canonical, image, type = 'website', jsonLd, noindex = false } = Astro.props;
+
+const siteUrl = (Astro.site?.toString() ?? 'https://valentinamoramorek.com/').replace(/\/$/, '');
+const canonicalUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
+const ogImage = image ?? `${siteUrl}/about/valentina_mora_morek.png`;
+const jsonLdEntries = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="Valentina Mora" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{
+	jsonLdEntries.map((entry) => (
+		<script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...entry })} />
+	))
+}

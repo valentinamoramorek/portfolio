@@ -1,0 +1,139 @@
+---
+---
+
+<div class="skills-badges-card">
+	<div class="badge b1">
+		<svg viewBox="0 0 24 24" fill="none" stroke="#0F7FD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+		</svg>
+		Brand Strategy
+	</div>
+
+	<div class="badge b2">
+		<svg viewBox="0 0 24 24" fill="none" stroke="#4A5222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18" />
+		</svg>
+		B2B Content Marketing
+	</div>
+
+	<div class="badge b3">
+		<svg viewBox="0 0 24 24" fill="none" stroke="#C23570" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="11" cy="11" r="7" /><path d="M11 7a4 4 0 0 0 0 8" /><path d="M16 16l5 5" />
+		</svg>
+		Personal Branding
+	</div>
+
+	<div class="badge b4">
+		<svg viewBox="0 0 24 24" fill="none" stroke="#C97814" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<rect x="3" y="6" width="7" height="5" rx="1.5" /><rect x="14" y="4" width="7" height="5" rx="1.5" />
+			<rect x="14" y="14" width="7" height="5" rx="1.5" /><path d="M10 8.5h4M17 9v5M10 8.5c2 0 4 3 4 6.5" />
+		</svg>
+		Cross-channel campaigns
+	</div>
+
+	<div class="badge b5">
+		<svg viewBox="0 0 24 24" fill="none" stroke="#6B3FD1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M13 2 4 14h6l-1 8 9-12h-6z" />
+		</svg>
+		Marketing Automations
+	</div>
+</div>
+
+<style>
+	.skills-badges-card {
+		position: relative;
+		width: 323px;
+		height: 400px;
+		background: #0f7fd4;
+		border-radius: 28px;
+		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0;
+		padding: 20px 0;
+		font-family: 'DM Sans', sans-serif;
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		padding: 13px 22px;
+		border-radius: 30px;
+		font-weight: 700;
+		font-size: 19px;
+		white-space: nowrap;
+		box-shadow: 0 6px 14px rgba(20, 30, 10, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+		animation: wiggle 5s ease-in-out infinite;
+		--rot: 0deg;
+		transform: rotate(var(--rot));
+	}
+	.badge svg {
+		flex-shrink: 0;
+		width: 22px;
+		height: 22px;
+	}
+
+	.badge.b1 {
+		background: #ffffff;
+		color: #0f7fd4;
+		--rot: -5deg;
+		align-self: center;
+		margin-left: -18px;
+		z-index: 5;
+		animation-delay: 0s;
+	}
+	.badge.b2 {
+		background: #edf3b3;
+		color: #4a5222;
+		--rot: 4deg;
+		align-self: center;
+		margin-left: 26px;
+		margin-top: 8px;
+		z-index: 4;
+		animation-delay: 0.4s;
+	}
+	.badge.b3 {
+		background: #ffd8e4;
+		color: #c23570;
+		--rot: -3deg;
+		align-self: center;
+		margin-left: -30px;
+		margin-top: 8px;
+		z-index: 3;
+		animation-delay: 0.8s;
+	}
+	.badge.b4 {
+		background: #ffe3b0;
+		color: #c97814;
+		--rot: 5deg;
+		align-self: center;
+		margin-left: 22px;
+		margin-top: 8px;
+		z-index: 2;
+		animation-delay: 1.2s;
+	}
+	.badge.b5 {
+		background: #e0d4ff;
+		color: #6b3fd1;
+		--rot: -4deg;
+		align-self: center;
+		margin-left: -10px;
+		margin-top: 8px;
+		z-index: 1;
+		animation-delay: 1.6s;
+	}
+
+	@keyframes wiggle {
+		0%,
+		100% {
+			transform: rotate(var(--rot)) translateY(0);
+		}
+		50% {
+			transform: rotate(var(--rot)) translateY(-5px);
+		}
+	}
+</style>

@@ -1,0 +1,267 @@
+---
+import { Image } from 'astro:assets';
+import graphicDesign from '../assets/content/about-me-carousel/graphic-design-valentina-mora.jpg';
+import myDog from '../assets/content/about-me-carousel/my-dog-valentina-mora.jpg';
+import communities from '../assets/content/about-me-carousel/communities-valentina-mora.jpeg';
+import noteWorthy from '../assets/content/about-me-carousel/note-worthy-valentina-mora.jpg';
+
+interface Slide {
+	src: ImageMetadata;
+	alt: string;
+	caption: string;
+}
+
+const slides: Slide[] = [
+	{
+		src: graphicDesign,
+		alt: 'Graphic design',
+		caption:
+			'Since graphic design is my 2nd passion, branding plays a huge role for me. Plus, I can guess the typeface on almost any sign, flyer, or logo I walk past.',
+	},
+	{
+		src: myDog,
+		alt: 'My dog',
+		caption:
+			'I have a dog named Falcon. He’s a multilingual dog; we speak English (mainly), Spanish, and Slovak with him, and we want to believe he understands us perfectly.',
+	},
+	{
+		src: communities,
+		alt: 'Communities',
+		caption:
+			'Communities matter! That’s a hill I’d die on, because it’s so special when a brand makes you feel like you’re part of a club and, more importantly, their club.',
+	},
+	{
+		src: noteWorthy,
+		alt: 'Note-worthy insights',
+		caption:
+			'I started writing down every "note-worthy” insight I come across (from my own experience, workshops, conclusions, and everything in between) about all things marketing. It’s my little treasure.',
+	},
+];
+---
+
+<section class="captioned-carousel overflow-x-hidden px-6 py-16 md:py-20" data-reveal>
+	<div class="max-w-6xl mx-auto flex flex-col items-center gap-8 md:gap-10">
+		<h2 class="font-heading font-bold text-4xl sm:text-5xl text-foreground text-center">
+			Fun-facts about me
+		</h2>
+
+		<div
+			class="carousel-wrapper relative w-full max-w-4xl flex items-center justify-center"
+			data-carousel
+			tabindex="0"
+			role="group"
+			aria-label="Featured content carousel"
+		>
+			<button
+				type="button"
+				class="nav-btn absolute left-0 z-40 shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg text-foreground flex items-center justify-center transition duration-200 ease-out hover:shadow-xl hover:-translate-y-0.5"
+				data-prev
+				aria-label="Previous"
+			>
+				<svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true">
+					<path
+						d="M15 6l-6 6 6 6"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</button>
+
+			<div class="stack-stage relative w-56 sm:w-64 md:w-72 aspect-[4/5]">
+				{
+					slides.map((slide, index) => (
+						<figure class="stack-slide absolute inset-0" data-slide data-slide-caption={slide.caption}>
+							<div class="polaroid-card w-full h-full bg-white rounded-[4px] shadow-xl pt-3 px-3 pb-8 md:pb-10 flex flex-col">
+								<div class="flex-1 overflow-hidden rounded-[2px] bg-neutral-100">
+									<Image
+										src={slide.src}
+										alt={slide.alt}
+										widths={[320, 480, 640]}
+										sizes="(min-width: 768px) 288px, 224px"
+										format="webp"
+										quality={80}
+										loading={index === 0 ? 'eager' : 'lazy'}
+										class="w-full h-full object-cover"
+									/>
+								</div>
+							</div>
+						</figure>
+					))
+				}
+			</div>
+
+			<button
+				type="button"
+				class="nav-btn absolute right-0 z-40 shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg text-foreground flex items-center justify-center transition duration-200 ease-out hover:shadow-xl hover:-translate-y-0.5"
+				data-next
+				aria-label="Next"
+			>
+				<svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true">
+					<path
+						d="M9 6l6 6-6 6"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</button>
+		</div>
+
+		<p class="font-sans text-sm sm:text-base text-foreground/60 text-center max-w-md transition-opacity duration-300" data-caption>
+			{slides[0].caption}
+		</p>
+	</div>
+</section>
+
+<style>
+	.stack-slide {
+		transition:
+			transform 0.3s ease-out,
+			opacity 0.3s ease-out;
+		transform-origin: center center;
+	}
+
+	.stack-slide.slot-active {
+		transform: translateX(0) scale(1) rotate(-3deg);
+		opacity: 1;
+		z-index: 30;
+	}
+
+	/* Below the sm breakpoint the stage has no room for peeking neighbors
+	   beside the arrow buttons, so non-active cards stay off to the side and
+	   fully hidden; only sm+ reveals the peeking stack. */
+	.stack-slide.slot-prev,
+	.stack-slide.slot-far-prev {
+		transform: translateX(-100%) scale(0.6) rotate(-8deg);
+		opacity: 0;
+		z-index: 10;
+		pointer-events: none;
+	}
+
+	.stack-slide.slot-next,
+	.stack-slide.slot-far-next {
+		transform: translateX(100%) scale(0.6) rotate(8deg);
+		opacity: 0;
+		z-index: 10;
+		pointer-events: none;
+	}
+
+	@media (min-width: 640px) {
+		.stack-slide.slot-prev {
+			transform: translateX(-58%) scale(0.76) rotate(-8deg);
+			opacity: 1;
+			z-index: 20;
+		}
+
+		.stack-slide.slot-next {
+			transform: translateX(58%) scale(0.76) rotate(8deg);
+			opacity: 1;
+			z-index: 20;
+		}
+
+		.stack-slide.slot-far-prev {
+			transform: translateX(-115%) scale(0.6) rotate(-10deg);
+		}
+
+		.stack-slide.slot-far-next {
+			transform: translateX(115%) scale(0.6) rotate(10deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.stack-slide {
+			transition: none;
+		}
+	}
+
+	[data-reveal] {
+		transition:
+			opacity 0.7s ease-out,
+			transform 0.7s ease-out;
+	}
+
+	[data-reveal].reveal-hidden {
+		opacity: 0;
+		transform: translateY(2rem);
+	}
+</style>
+
+<script>
+	function mod(n: number, m: number) {
+		return ((n % m) + m) % m;
+	}
+
+	function slotClass(delta: number) {
+		if (delta === 0) return 'slot-active';
+		if (delta === -1) return 'slot-prev';
+		if (delta === 1) return 'slot-next';
+		return delta < 0 ? 'slot-far-prev' : 'slot-far-next';
+	}
+
+	const carousels = document.querySelectorAll<HTMLElement>('[data-carousel]');
+
+	carousels.forEach((carousel) => {
+		const frames = Array.from(carousel.querySelectorAll<HTMLElement>('[data-slide]'));
+		const captionEl = carousel.parentElement?.querySelector<HTMLElement>('p[data-caption]');
+		const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-prev]');
+		const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-next]');
+		let index = 0;
+
+		function render(newIndex: number) {
+			index = mod(newIndex, frames.length);
+
+			frames.forEach((frame, i) => {
+				const delta = mod(i - index + frames.length / 2, frames.length) - frames.length / 2;
+				frame.className = `stack-slide absolute inset-0 ${slotClass(delta)}`;
+				frame.setAttribute('aria-hidden', String(delta !== 0));
+			});
+
+			if (captionEl) {
+				captionEl.style.opacity = '0';
+				window.setTimeout(() => {
+					captionEl.textContent = frames[index].dataset.slideCaption ?? '';
+					captionEl.style.opacity = '1';
+				}, 150);
+			}
+		}
+
+		prevBtn?.addEventListener('click', () => render(index - 1));
+		nextBtn?.addEventListener('click', () => render(index + 1));
+
+		carousel.addEventListener('keydown', (event) => {
+			if (event.key === 'ArrowLeft') {
+				event.preventDefault();
+				render(index - 1);
+			} else if (event.key === 'ArrowRight') {
+				event.preventDefault();
+				render(index + 1);
+			}
+		});
+
+		render(0);
+	});
+
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const revealEls = document.querySelectorAll<HTMLElement>('.captioned-carousel[data-reveal]');
+
+	if (!reduceMotion) {
+		revealEls.forEach((el) => el.classList.add('reveal-hidden'));
+	}
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				entry.target.classList.remove('reveal-hidden');
+				observer.unobserve(entry.target);
+			}
+		},
+		{ threshold: 0.2 },
+	);
+
+	revealEls.forEach((el) => observer.observe(el));
+</script>

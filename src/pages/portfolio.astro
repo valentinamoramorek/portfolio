@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentFilters from '../components/ContentFilters.astro';
+import ContentGrid from '../components/ContentGrid.astro';
+import ContentModal from '../components/ContentModal.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Proof of Content - Valentina Mora';
+const description =
+	'A full portfolio of B2B content, from LinkedIn posts to newsletters and short-form video, created by Valentina Mora for brands like Remotivate, Anna Shcherbyna, Girl in Corporation, and Daniela Campos.';
+---
+
+<Layout title={title} description={description}>
+	<section class="px-6 pt-6 pb-12 md:pb-16">
+		<div class="max-w-6xl mx-auto">
+			<h1
+				class="font-heading font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-foreground"
+			>
+				Proof of <span class="text-strong-blue">Content</span>
+			</h1>
+			<p class="font-sans text-base sm:text-lg text-foreground/70 mt-4 mb-10 md:mb-12">
+				Every post here made someone stop scrolling. Or comment. Or hit follow :).
+			</p>
+			<ContentFilters />
+		</div>
+	</section>
+
+	<div class="border-t border-dashed border-strong-blue"></div>
+
+	<section class="bg-soft-lime px-6 py-12 md:py-16">
+		<div class="max-w-6xl mx-auto">
+			<ContentGrid />
+		</div>
+	</section>
+
+	<ContentModal />
+
+	<Footer />
+</Layout>
