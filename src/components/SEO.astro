@@ -13,7 +13,7 @@ const { title, description, canonical, image, type = 'website', jsonLd, noindex 
 
 const siteUrl = (Astro.site?.toString() ?? 'https://valentinamoramorek.com/').replace(/\/$/, '');
 const canonicalUrl = canonical ?? `${siteUrl}${Astro.url.pathname}`;
-const ogImage = image ?? `${siteUrl}/about/valentina_mora_morek.png`;
+const ogImage = image ?? `${siteUrl}/valentina-mora-content-manager.png`;
 const jsonLdEntries = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
