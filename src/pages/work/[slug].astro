@@ -438,7 +438,12 @@ const nextCaseStudy = getNextCaseStudy(caseStudy.slug);
 				observer.unobserve(el);
 			}
 		},
-		{ threshold: 0.15 },
+		// threshold 0 (not a percentage) so very tall sections — like Featured
+		// Content, which can run to thousands of px on a single-column mobile
+		// layout — still reveal as soon as they start entering the viewport,
+		// instead of requiring an unreachable percentage of their own height
+		// to be visible at once.
+		{ threshold: 0 },
 	);
 
 	revealEls.forEach((el) => observer.observe(el));
