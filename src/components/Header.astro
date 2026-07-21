@@ -1,10 +1,26 @@
 ---
 ---
 
-<header class="py-8 md:py-10">
+<header class="site-header py-4 sm:py-6 md:py-8">
 	<nav class="grid grid-cols-[1fr_auto_1fr] items-center gap-8 sm:gap-12 md:gap-16 font-sans text-base sm:text-lg max-w-xl mx-auto px-6 whitespace-nowrap">
 		<a href="/#work" class="text-strong-blue hover:opacity-80 transition justify-self-end">My Work</a>
 		<a href="/" class="text-strong-blue font-bold text-lg sm:text-xl justify-self-center">VM</a>
 		<a href="/portfolio" class="text-strong-blue hover:opacity-80 transition justify-self-start">Proof of Content</a>
 	</nav>
 </header>
+
+<style>
+	@media (max-height: 900px) {
+		.site-header {
+			padding-top: 0.75rem;
+			padding-bottom: 0.75rem;
+		}
+	}
+
+	@media (max-height: 700px) {
+		.site-header {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
+	}
+</style>
