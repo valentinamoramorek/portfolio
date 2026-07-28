@@ -33,12 +33,23 @@ const FILTER_LABELS: Record<string, string> = {
 	</div>
 </div>
 
+<div
+	class="fixed bottom-6 right-6 z-50 rounded-full bg-foreground text-background font-sans text-sm px-4 py-2 shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"
+	data-filter-toast
+	role="status"
+	aria-live="polite"
+>
+	Link copied!
+</div>
+
 <script>
 	const ACTIVE_CLASSES = ['bg-soft-blue', 'text-strong-blue', 'font-medium'];
 	const INACTIVE_CLASSES = ['bg-white', 'border', 'border-strong-blue/15', 'text-foreground/60'];
+	const FILTER_PARAM = 'type';
 
 	const bar = document.querySelector<HTMLElement>('[data-filter-bar]');
 	const pills = bar ? Array.from(bar.querySelectorAll<HTMLButtonElement>('[data-filter-type]')) : [];
+	const toast = document.querySelector<HTMLElement>('[data-filter-toast]');
 
 	function setActive(pill: HTMLButtonElement) {
 		pills.forEach((p) => {
@@ -57,10 +68,52 @@ const FILTER_LABELS: Record<string, string> = {
 		});
 	}
 
+	function updateUrl(type: string) {
+		const url = new URL(window.location.href);
+		if (type === 'all') {
+			url.searchParams.delete(FILTER_PARAM);
+		} else {
+			url.searchParams.set(FILTER_PARAM, type);
+		}
+		window.history.replaceState({}, '', url);
+		return url;
+	}
+
+	let toastTimeout: ReturnType<typeof setTimeout> | undefined;
+	function showToast() {
+		if (!toast) return;
+		clearTimeout(toastTimeout);
+		toast.classList.remove('opacity-0', 'pointer-events-none');
+		toast.classList.add('opacity-100');
+		toastTimeout = setTimeout(() => {
+			toast.classList.add('opacity-0', 'pointer-events-none');
+			toast.classList.remove('opacity-100');
+		}, 1800);
+	}
+
+	async function copyLink(url: URL) {
+		try {
+			await navigator.clipboard.writeText(url.toString());
+			showToast();
+		} catch {
+			// Clipboard API unavailable (e.g. insecure context) — URL is still updated for manual copy.
+		}
+	}
+
 	pills.forEach((pill) => {
 		pill.addEventListener('click', () => {
+			const type = pill.dataset.filterType ?? 'all';
 			setActive(pill);
-			applyFilter(pill.dataset.filterType ?? 'all');
+			applyFilter(type);
+			copyLink(updateUrl(type));
 		});
 	});
+
+	// Deep-link support: pre-select the filter named in the URL, e.g. /portfolio?type=Short%20Video
+	const initialType = new URL(window.location.href).searchParams.get(FILTER_PARAM);
+	const initialPill = initialType ? pills.find((p) => p.dataset.filterType === initialType) : undefined;
+	if (initialPill) {
+		setActive(initialPill);
+		applyFilter(initialType!);
+	}
 </script>
