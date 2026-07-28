@@ -12,6 +12,7 @@ components.**
 | `background`    | `#FEFFEF` | Page/app background            |
 | `soft-lime`     | `#EDF3B3` | Secondary surface / accent     |
 | `soft-blue`     | `#CFEAFF` | Secondary surface / accent     |
+| `pale-blue`     | `#E4F3FF` | Auto-translation notice background (`ContentCard.astro`) |
 | `strong-blue`   | `#0F7FD4` | Buttons, links                 |
 | `bright-lime`   | `#EAF261` | CTAs, highlights                |
 | `foreground`    | `#111111` | Near-black body/heading text   |
