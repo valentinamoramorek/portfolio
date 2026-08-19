@@ -7,67 +7,30 @@ import NewFollowersCard from './NewFollowersCard.astro';
 import SkillsBadgesCard from './SkillsBadgesCard.astro';
 ---
 
-<section class="carousel py-4 md:py-8 overflow-hidden">
+<section class="carousel py-12 md:py-16 overflow-hidden">
 	<div class="flex w-max gap-5 md:gap-6 track">
 		<!--
 			Rendered twice back-to-back so translateX(-50%) always lands on an
 			identical frame, making the scroll loop seamlessly without any
 			JS-driven reset.
 		-->
-		<div class="shrink-0 card-slot"><SelectedPostsCard /></div>
-		<div class="shrink-0 card-slot"><ImpressionsStatCard /></div>
-		<div class="shrink-0 card-slot"><TechStackCard /></div>
-		<div class="shrink-0 card-slot"><TestimonialSlackCard /></div>
-		<div class="shrink-0 card-slot"><NewFollowersCard /></div>
-		<div class="shrink-0 card-slot"><SkillsBadgesCard /></div>
+		<div class="shrink-0"><SelectedPostsCard /></div>
+		<div class="shrink-0"><ImpressionsStatCard /></div>
+		<div class="shrink-0"><TechStackCard /></div>
+		<div class="shrink-0"><TestimonialSlackCard /></div>
+		<div class="shrink-0"><NewFollowersCard /></div>
+		<div class="shrink-0"><SkillsBadgesCard /></div>
 
-		<div class="shrink-0 card-slot"><SelectedPostsCard /></div>
-		<div class="shrink-0 card-slot"><ImpressionsStatCard /></div>
-		<div class="shrink-0 card-slot"><TechStackCard /></div>
-		<div class="shrink-0 card-slot"><TestimonialSlackCard /></div>
-		<div class="shrink-0 card-slot"><NewFollowersCard /></div>
-		<div class="shrink-0 card-slot"><SkillsBadgesCard /></div>
+		<div class="shrink-0"><SelectedPostsCard /></div>
+		<div class="shrink-0"><ImpressionsStatCard /></div>
+		<div class="shrink-0"><TechStackCard /></div>
+		<div class="shrink-0"><TestimonialSlackCard /></div>
+		<div class="shrink-0"><NewFollowersCard /></div>
+		<div class="shrink-0"><SkillsBadgesCard /></div>
 	</div>
 </section>
 
 <style>
-	.card-slot {
-		width: 323px;
-		height: 400px;
-	}
-
-	.card-slot > :global(*) {
-		transform-origin: top left;
-	}
-
-	@media (max-height: 900px) {
-		.carousel {
-			padding-top: 0.75rem;
-			padding-bottom: 0.75rem;
-		}
-		.card-slot {
-			width: 258px;
-			height: 320px;
-		}
-		.card-slot > :global(*) {
-			transform: scale(0.8);
-		}
-	}
-
-	@media (max-height: 700px) {
-		.carousel {
-			padding-top: 0.5rem;
-			padding-bottom: 0.5rem;
-		}
-		.card-slot {
-			width: 194px;
-			height: 240px;
-		}
-		.card-slot > :global(*) {
-			transform: scale(0.6);
-		}
-	}
-
 	.track {
 		animation: marquee 30s linear infinite;
 	}
